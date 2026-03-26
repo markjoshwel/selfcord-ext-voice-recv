@@ -1,7 +1,7 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/discord-ext-voice-recv?color=dodgerblue&link=https%3A%2F%2Fpypi.org%2Fproject%2Fdiscord-ext-voice-recv%2F)
 
 # discord-ext-voice-recv
-Voice receive extension package for discord.py
+Voice receive extension package for discord.py-self
 
 ## Warning
 **This extension should be more or less functional, but the code is not yet feature complete.  No guarantees are given for stability or random breaking changes.**
@@ -17,10 +17,10 @@ python -m pip install discord-ext-voice-recv
 
 To install directly from github:
 ```
-python -m pip install git+https://github.com/imayhaveborkedit/discord-ext-voice-recv
+python -m pip install git+https://github.com/markjoshwel/selfcord-ext-voice-recv
 ```
 
-Naturally, this extension depends on `discord.py` being installed with voice support (`pynacl`).
+Naturally, this extension depends on `discord.py-self` being installed with voice support (`pynacl`).
 
 ## Example
 See the [example script](examples/recv.py).

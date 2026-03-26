@@ -134,6 +134,15 @@ class VoiceRecvClient(discord.VoiceClient):
     def _get_id_from_ssrc(self, ssrc: int) -> Optional[int]:
         return self._ssrc_to_id.get(ssrc)
 
+    def _resolve_voice_participant(self, user_id: int):
+        guild = self.guild
+        if guild is not None:
+            member = guild.get_member(user_id)
+            if member is not None:
+                return member
+
+        return self.client.get_user(user_id)
+
     def listen(self, sink: AudioSink, *, after: Optional[AfterCB] = None) -> None:
         """Receives audio into a :class:`AudioSink`."""
         # TODO: more info
