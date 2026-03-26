@@ -10,7 +10,7 @@ from .buffer import HeapJitterBuffer as JitterBuffer
 from .rtp import FakePacket
 from .utils import add_wrapped
 
-from discord.opus import Decoder
+from discord.opus import Decoder, OpusError
 
 if TYPE_CHECKING:
     from typing import Optional, Tuple, Dict, Callable, Any
@@ -151,7 +151,16 @@ class PacketDecoder:
 
         # Decode as per usual
         if packet:
-            pcm = self._decoder.decode(packet.decrypted_data, fec=False)
+            try:
+                pcm = self._decoder.decode(packet.decrypted_data, fec=False)
+            except OpusError:
+                log.warning(
+                    "Opus decode failed for ssrc=%s sequence=%s timestamp=%s; dropping frame",
+                    self.ssrc,
+                    packet.sequence,
+                    packet.timestamp,
+                )
+                pcm = b""
             return packet, pcm
 
         # Fake packet, need to check next one to use fec
@@ -165,10 +174,27 @@ class PacketDecoder:
                 packet.sequence,
                 next_packet.sequence,
             )
-            pcm = self._decoder.decode(nextdata, fec=True)
+            try:
+                pcm = self._decoder.decode(nextdata, fec=True)
+            except OpusError:
+                log.warning(
+                    "Opus FEC decode failed for ssrc=%s fake_seq=%s fec_seq=%s; dropping frame",
+                    self.ssrc,
+                    packet.sequence,
+                    next_packet.sequence,
+                )
+                pcm = b""
 
         # Need to drop a packet
         else:
-            pcm = self._decoder.decode(None, fec=False)
+            try:
+                pcm = self._decoder.decode(None, fec=False)
+            except OpusError:
+                log.warning(
+                    "Opus PLC decode failed for ssrc=%s fake_seq=%s; dropping frame",
+                    self.ssrc,
+                    packet.sequence,
+                )
+                pcm = b""
 
         return packet, pcm
