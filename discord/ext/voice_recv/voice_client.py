@@ -6,9 +6,14 @@ import time
 import asyncio
 import logging
 
-import discord
-from discord.voice_state import VoiceConnectionState
-from discord.utils import MISSING
+try:
+    import selfcord as discord
+    from selfcord.voice_state import VoiceConnectionState
+    from selfcord.utils import MISSING
+except ImportError:
+    import discord
+    from discord.voice_state import VoiceConnectionState
+    from discord.utils import MISSING
 
 from typing import TYPE_CHECKING
 
@@ -18,7 +23,10 @@ from .sinks import AudioSink
 
 if TYPE_CHECKING:
     from typing import Optional, Dict, Any, Union
-    from discord.ext.commands._types import CoroFunc
+    try:
+        from selfcord.ext.commands._types import CoroFunc
+    except ImportError:
+        from discord.ext.commands._types import CoroFunc
     from .reader import AfterCB
 
 from pprint import pformat
