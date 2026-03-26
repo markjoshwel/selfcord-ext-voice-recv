@@ -63,7 +63,9 @@ async def hook(self: DiscordVoiceWebSocket, msg: Dict[str, Any]):
             log.info("WS payload has extra keys: %s", m)
 
     if op == self.READY:
-        vc._add_ssrc(vc.user.id, data['ssrc'])
+        current_user = vc.client.user
+        if current_user is not None:
+            vc._add_ssrc(current_user.id, data['ssrc'])
 
     elif op == self.SESSION_DESCRIPTION:
         if vc._reader:
